@@ -1,0 +1,115 @@
+
+drop table Persona;
+drop table Arbitro;
+drop table Entrenador;
+drop table Jugador;
+drop table Acta;
+drop table Equipo;
+drop table Partido;
+drop table Asociada;
+drop table Incidencia;
+drop table Arbitra;
+
+
+
+
+CREATE TABLE Persona
+ ( dni VARCHAR2(9) PRIMARY KEY,
+    nombre VARCHAR2(20) NOT NULL
+   );
+
+CREATE TABLE Arbitro
+( dni VARCHAR2(9) PRIMARY KEY not null,
+  nombre VARCHAR2(20) NOT NULL,
+  numTemporadas NUMBER(2) NOT NULL
+  );
+
+CREATE TABLE Entrenador
+( dni VARCHAR2(9) PRIMARY KEY,
+    nombre VARCHAR2(20) NOT NULL
+ );
+
+CREATE TABLE Equipo
+( nif VARCHAR2(5) PRIMARY KEY,
+  nombre VARCHAR2(10),
+  presupuesto NUMBER(10),
+  dniEntrenador VARCHAR2(9),
+  constraint e_FK FOREIGN KEY(dniEntrenador) REFERENCES Entrenador(dni)
+);
+
+CREATE TABLE Jugador
+( dni VARCHAR2(9) PRIMARY KEY,
+  dorsal NUMBER(2) NOT NULL,
+  ficha VARCHAR2(5) NOT NULL,
+  demarcacion VARCHAR2(10),
+  nif VARCHAR2(20),
+  constraint j_FK FOREIGN KEY(nif) REFERENCES Equipo(nif)
+);
+
+CREATE TABLE Partido
+( jornada NUMBER(2) not null,
+  estadio VARCHAR2(10) not null,
+  diaYHora VARCHAR2(20) NOT NULL,
+  nifLocal VARCHAR2(10),
+  constraint p_FK FOREIGN KEY(nifLocal) REFERENCES Equipo(nif),
+  nifVisitante VARCHAR2(10),
+  constraint p1_FK FOREIGN KEY(nifVisitante) REFERENCES Equipo(nif),
+  dniArbitro VARCHAR2(9),
+  constraint p2_FK FOREIGN KEY(dniArbitro) REFERENCES Arbitro(dni),
+  constraint P_PK PRIMARY KEY(jornada, estadio)
+
+ );
+
+CREATE TABLE Acta
+( 
+  idActa VARCHAR2(5) PRIMARY KEY not null,
+  dniArbitro VARCHAR2(9),
+  jornada NUMBER(2),
+  estadio VARCHAR2(10),
+  constraint a_FK FOREIGN KEY(estadio) REFERENCES Partido(estadio), 
+  constraint a1_FK FOREIGN KEY(dniArbitro) REFERENCES Arbitro(dni)
+  );
+
+
+
+CREATE TABLE Partido
+( jornada NUMBER(2),
+  estadio VARCHAR2(10),
+  diaYHora VARCHAR2(20) NOT NULL,
+  nifLocal VARCHAR2(10),
+  constraint p_FK FOREIGN KEY(nifLocal) REFERENCES Equipo(nif),
+  nifVisitante VARCHAR2(10),
+  constraint p1_FK FOREIGN KEY(nifVisitante) REFERENCES Equipo(nif),
+  dniArbitro VARCHAR2(9),
+  constraint p2_FK FOREIGN KEY(dniArbitro) REFERENCES Arbitro(dni),
+  constraint P_PK PRIMARY KEY(jornada, estadio)
+
+ );
+ 
+CREATE TABLE Asociada
+( 
+  idActa VARCHAR2(5)  n_FK FOREIGN KEY(idActa) REFERENCES Acta(idActa),
+  jornada NUMBER(2) n_FK FOREIGN KEY(jornada) REFERENCES Partido(jornada), 
+  estadio VARCHAR2(10) n_FK FOREIGN KEY(estadio) REFERENCES Partido(estadio)
+  );
+  
+
+CREATE TABLE Incidencia
+( 
+   idActa VARCHAR2(5)  n_FK FOREIGN KEY(idActa) REFERENCES Acta(idActa),
+   minuto NUMBER(3) PRIMARY KEY,
+   tipo VARCHAR2(10),
+   explicacion VARCHAR2(20),
+     constraint I_PK PRIMARY KEY(idActa, minuto)
+  );
+  
+  CREATE TABLE Arbitra
+( 
+  dniArbitro VARCHAR2(9),
+  constraint ar_FK FOREIGN KEY(dniArbitro) REFERENCES Arbitro(dni)
+  jornada NUMBER(2),
+  constraint ar1_FK FOREIGN KEY(jornada) REFERENCES Partido(jornada), 
+  estadio VARCHAR2(10),
+  constraint ar2_FK FOREIGN KEY(estadio) REFERENCES Partido(estadio)
+  );
+
